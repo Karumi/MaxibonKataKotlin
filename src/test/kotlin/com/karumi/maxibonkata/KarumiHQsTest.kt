@@ -3,9 +3,9 @@ package com.karumi.maxibonkata
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
 import io.kotlintest.specs.ShouldSpec
-import com.karumi.maxibonkata.generators.DeveloperGenerator
-import com.karumi.maxibonkata.generators.HungryDeveloperGenerator
-import com.karumi.maxibonkata.generators.NotSoHungryDeveloperGenerator
+import com.karumi.maxibonkata.Generators.DeveloperGenerator
+import com.karumi.maxibonkata.Generators.HungryDeveloperGenerator
+import com.karumi.maxibonkata.Generators.NotSoHungryDeveloperGenerator
 import io.kotlintest.properties.Gen
 
 class KarumiHQsTest : ShouldSpec() {
@@ -36,6 +36,17 @@ class KarumiHQsTest : ShouldSpec() {
 
                     val expectedMaxibons = calculateMaxibonsLeft(initialMaxibons, developer)
                     office.maxibonsLeft == expectedMaxibons
+                })
+            }
+
+            should("request 10 more maxibons using the chat if there are less than 3 in the fridge") {
+                forAll(HungryDeveloperGenerator(), { developer ->
+                    val chat = MockChat()
+                    val office = KarumiHQs(chat)
+
+                    office.openFridge(developer)
+
+                    chat.messageSent == "Hi guys, I'm ${developer.name}. We need more maxibons!"
                 })
             }
 

@@ -25,7 +25,7 @@ class KarumiHQs(val chat: Chat = ConsoleChat()) {
     private fun shouldBuyMoreMaxibons(): Boolean = maxibonsLeft <= 2
 
     private fun notifyWeShouldBuyMaxibon(developer: Developer) =
-            chat.sendMessage("Hi guys, I'm " + developer.name + ". We need more maxibons!")
+            chat.sendMessage("Hi guys, I'm ${developer.name}. We need more maxibons!")
 
     private fun buyMaxibons() {
         maxibonsLeft += 10

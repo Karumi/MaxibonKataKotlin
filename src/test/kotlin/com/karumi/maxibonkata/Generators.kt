@@ -2,7 +2,7 @@ package com.karumi.maxibonkata
 
 import io.kotlintest.properties.Gen
 
-object generators {
+object Generators {
     class DeveloperGenerator : Gen<Developer> {
         override fun generate(): Developer =
                 Developer(Gen.string().generate(), Gen.int().generate())
