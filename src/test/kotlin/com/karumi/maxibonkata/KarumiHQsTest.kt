@@ -87,16 +87,14 @@ class KarumiHQsTest : ShouldSpec() {
     private fun calculateMaxibonsLeft(initialMaxibons: Int, dev: Developer): Int =
             calculateMaxibonsLeft(initialMaxibons, listOf(dev))
 
-    private fun calculateMaxibonsLeft(initialMaxibons: Int, developers: List<Developer>): Int {
-        var maxibonsLeft = initialMaxibons
-        developers.forEach { developer ->
-            maxibonsLeft = Math.max(0, maxibonsLeft - developer.maxibonsToGrab)
+    private fun calculateMaxibonsLeft(initialMaxibons: Int, developers: List<Developer>): Int =
+        developers.fold(initialMaxibons) { acc, dev ->
+            var maxibonsLeft = Math.max(0, acc - dev.maxibonsToGrab)
             if (maxibonsLeft <= 2) {
                 maxibonsLeft += 10
             }
+            maxibonsLeft
         }
-        return maxibonsLeft
-    }
 
     private class MockChat : Chat {
         var messageSent: String? = null
