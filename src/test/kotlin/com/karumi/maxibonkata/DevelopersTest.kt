@@ -1,9 +1,8 @@
-package com.karumi.maxibonkata.developers
+package com.karumi.maxibonkata
 
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
 import io.kotlintest.specs.ShouldSpec
-import com.karumi.maxibonkata.Developer
 
 class DevelopersTest : ShouldSpec() {
     init {
