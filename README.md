@@ -48,7 +48,7 @@ Your task as iOS Developer is to resolve this problem or test an already impleme
 
 **This repository is ready to build the application, pass the checkstyle and your tests in Travis-CI environments.**
 
-#License
+# License
 
 Copyright 2017 Karumi
 
