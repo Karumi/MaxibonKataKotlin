@@ -1,10 +1,12 @@
 package com.karumi.maxibonkata
 
+import com.karumi.maxibonkata.Generators.DeveloperForMaxGenerator
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
 import io.kotlintest.specs.ShouldSpec
 import com.karumi.maxibonkata.Generators.DeveloperGenerator
 import com.karumi.maxibonkata.Generators.HungryDeveloperGenerator
+import com.karumi.maxibonkata.Generators.ListOf
 import com.karumi.maxibonkata.Generators.NotSoHungryDeveloperGenerator
 import io.kotlintest.properties.Gen
 
@@ -79,6 +81,28 @@ class KarumiHQsTest : ShouldSpec() {
 
                     val expectedMaxibons = calculateMaxibonsLeft(initialMaxibons, developers)
                     office.maxibonsLeft == expectedMaxibons
+                })
+            }
+
+            should("request 10 more maxibons using the chat if there are less than 3 in the fridge when grabbing maxibons in group") {
+                forAll(Gen.list(HungryDeveloperGenerator()), { developers ->
+                    val chat = MockChat()
+                    val office = KarumiHQs(chat)
+
+                    office.openFridge(developers)
+
+                    chat.messageSent!!.contains("We need more maxibons!")
+                })
+            }
+
+            should("never request more maxibons to the team using the chat if there are more than 2 in the fridge when grabbing maxibons in group") {
+                forAll(ListOf(0, 7, DeveloperForMaxGenerator(1)), { developersWhoWontGrabAllMaxibons ->
+                    val chat = MockChat()
+                    val office = KarumiHQs(chat)
+
+                    office.openFridge(developersWhoWontGrabAllMaxibons)
+
+                    chat.messageSent == null
                 })
             }
         }
