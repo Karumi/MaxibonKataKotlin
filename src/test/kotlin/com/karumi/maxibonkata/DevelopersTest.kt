@@ -2,6 +2,9 @@ package com.karumi.maxibonkata
 
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
+import io.kotlintest.properties.headers
+import io.kotlintest.properties.row
+import io.kotlintest.properties.table
 import io.kotlintest.specs.ShouldSpec
 
 class DevelopersTest : ShouldSpec() {
@@ -24,12 +27,19 @@ class DevelopersTest : ShouldSpec() {
                 })
             }
 
+            val developers = table(
+                    headers("developer", "expected maxibons to grab"),
+                    row(Developer.pedro, 3),
+                    row(Developer.fran, 1),
+                    row(Developer.davide, 0),
+                    row(Developer.sergio, 2),
+                    row(Developer.jorge, 1)
+            )
+
             should("assign the number of maxibons specified to every developer") {
-                Developer.pedro.maxibonsToGrab shouldBe 3
-                Developer.fran.maxibonsToGrab shouldBe 1
-                Developer.davide.maxibonsToGrab shouldBe 0
-                Developer.sergio.maxibonsToGrab shouldBe 2
-                Developer.jorge.maxibonsToGrab shouldBe 1
+                forAll(developers) { developer, expectedMaxibonsToGrab ->
+                    developer.maxibonsToGrab shouldBe expectedMaxibonsToGrab
+                }
             }
         }
 
