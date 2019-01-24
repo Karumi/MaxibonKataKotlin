@@ -1,7 +1,11 @@
 package com.karumi.maxibonkata
 
 class KarumiHQs(val chat: Chat = ConsoleChat()) {
-    var maxibonsLeft: Int = 10
+    companion object {
+        val minMaxibons = 2
+        val maxMaxibons = 10
+    }
+    var maxibonsLeft: Int = maxMaxibons
 
     fun openFridge(developer: Developer) {
         grabMaxibons(developer)
@@ -22,12 +26,12 @@ class KarumiHQs(val chat: Chat = ConsoleChat()) {
         maxibonsLeft = Math.max(maxibonsLeft, 0)
     }
 
-    private fun shouldBuyMoreMaxibons(): Boolean = maxibonsLeft <= 2
+    private fun shouldBuyMoreMaxibons(): Boolean = maxibonsLeft <= minMaxibons
 
     private fun notifyWeShouldBuyMaxibon(developer: Developer) =
             chat.sendMessage("Hi guys, I'm ${developer.name}. We need more maxibons!")
 
     private fun buyMaxibons() {
-        maxibonsLeft += 10
+        maxibonsLeft += maxMaxibons
     }
 }
