@@ -1,6 +1,9 @@
 package com.karumi.maxibonkata
 
-data class Developer internal constructor(val name: String = "", private val numberOfMaxibons: Int = 0) {
+data class Developer internal constructor(
+    val name: String = "",
+    private val numberOfMaxibons: Int = 0
+) {
     val maxibonsToGrab: Int = Math.max(0, numberOfMaxibons)
 
     companion object {
@@ -11,4 +14,3 @@ data class Developer internal constructor(val name: String = "", private val num
         val jorge = Developer("Jorge", numberOfMaxibons = 1)
     }
 }
-
