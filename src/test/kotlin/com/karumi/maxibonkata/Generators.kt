@@ -1,33 +1,51 @@
 package com.karumi.maxibonkata
 
 import io.kotlintest.properties.Gen
+import kotlin.random.Random
 
 object Generators {
-    class DeveloperGenerator : Gen<Developer> {
-        override fun generate(): Developer =
-                Developer(Gen.string().generate(), Gen.int().generate())
+    open class DeveloperGenerator(
+        private val nameGenerator: Gen<String>,
+        private val numbersOfMaxibonsGenerator: Gen<Int>
+    ) : Gen<Developer> {
+        override fun constants(): Iterable<Developer> = emptyList()
+
+        override fun random(): Sequence<Developer> =
+            nameGenerator.random()
+                .zip(numbersOfMaxibonsGenerator.random())
+                .map { Developer(it.first, it.second) }
     }
 
-    class HungryDeveloperGenerator : Gen<Developer> {
-        override fun generate(): Developer =
-                Developer(Gen.string().generate(), Gen.choose(8, Int.MAX_VALUE).generate())
-    }
+    class AnyDeveloperGenerator : DeveloperGenerator(
+        nameGenerator = Gen.string(),
+        numbersOfMaxibonsGenerator = Gen.int()
+    )
 
-    class NotSoHungryDeveloperGenerator : Gen<Developer> {
-        override fun generate(): Developer =
-                Developer(Gen.string().generate(), Gen.choose(0, 7).generate())
-    }
+    class HungryDeveloperGenerator : DeveloperGenerator(
+        nameGenerator = Gen.string(),
+        numbersOfMaxibonsGenerator = Gen.choose(8, Int.MAX_VALUE)
+    )
 
-    class DeveloperForMaxGenerator(val maxMaxibonsToGrab: Int) : Gen<Developer> {
-        override fun generate(): Developer =
-                Developer(Gen.string().generate(), Gen.choose(0, maxMaxibonsToGrab + 1).generate())
-    }
+    class NotSoHungryDeveloperGenerator : DeveloperGenerator(
+        nameGenerator = Gen.string(),
+        numbersOfMaxibonsGenerator = Gen.choose(0, 7)
+    )
 
-    class ListOf<T>(val min: Int, val max: Int, val gen: Gen<T>) : Gen<List<T>> {
-        override fun generate(): List<T> {
-            val numberOfElements = Gen.choose(min, max + 1).generate()
-            return (1..numberOfElements).map { gen.generate() }
+    class DeveloperForMaxGenerator(maxMaxibonsToGrab: Int) : DeveloperGenerator(
+        nameGenerator = Gen.string(),
+        numbersOfMaxibonsGenerator = Gen.choose(0, maxMaxibonsToGrab + 1)
+    )
+
+    class ListOf<T>(
+        private val min: Int,
+        private val max: Int,
+        private val gen: Gen<T>
+    ) : Gen<List<T>> {
+        override fun constants(): Iterable<List<T>> = emptyList()
+
+        override fun random(): Sequence<List<T>> = generateSequence {
+            val size = Random.nextInt(min, max + 1)
+            gen.random().take(size).toList()
         }
     }
-
 }

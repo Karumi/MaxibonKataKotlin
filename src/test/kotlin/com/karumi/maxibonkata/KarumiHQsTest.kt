@@ -1,16 +1,17 @@
 package com.karumi.maxibonkata
 
+import com.karumi.maxibonkata.Generators.AnyDeveloperGenerator
 import com.karumi.maxibonkata.Generators.DeveloperForMaxGenerator
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.properties.forAll
-import io.kotlintest.specs.ShouldSpec
-import com.karumi.maxibonkata.Generators.DeveloperGenerator
 import com.karumi.maxibonkata.Generators.HungryDeveloperGenerator
 import com.karumi.maxibonkata.Generators.ListOf
 import com.karumi.maxibonkata.Generators.NotSoHungryDeveloperGenerator
 import io.kotlintest.properties.Gen
+import io.kotlintest.properties.forAll
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.ShouldSpec
 
 class KarumiHQsTest : ShouldSpec() {
+
     init {
         "KarumiHQs" {
             should("start the day with 10 maxibons") {
@@ -20,17 +21,17 @@ class KarumiHQsTest : ShouldSpec() {
             }
 
             should("always has more than two maxibons in the fridge") {
-                forAll(DeveloperGenerator(), { developer ->
+                forAll(AnyDeveloperGenerator()) { developer ->
                     val office = KarumiHQs()
 
                     office.openFridge(developer)
 
                     office.maxibonsLeft > 2
-                })
+                }
             }
 
             should("buy 10 more maxibons if there are less than 3 in the fridge") {
-                forAll(HungryDeveloperGenerator(), { developer ->
+                forAll(HungryDeveloperGenerator()) { developer ->
                     val office = KarumiHQs()
                     val initialMaxibons = office.maxibonsLeft
 
@@ -38,42 +39,42 @@ class KarumiHQsTest : ShouldSpec() {
 
                     val expectedMaxibons = calculateMaxibonsLeft(initialMaxibons, developer)
                     office.maxibonsLeft == expectedMaxibons
-                })
+                }
             }
 
             should("request 10 more maxibons using the chat if there are less than 3 in the fridge") {
-                forAll(HungryDeveloperGenerator(), { developer ->
+                forAll(HungryDeveloperGenerator()) { developer ->
                     val chat = MockChat()
                     val office = KarumiHQs(chat)
 
                     office.openFridge(developer)
 
                     chat.messageSent == "Hi guys, I'm ${developer.name}. We need more maxibons!"
-                })
+                }
             }
 
             should("never request more maxibons to the team using the chat if there are more than 2 in the fridge") {
-                forAll(NotSoHungryDeveloperGenerator(), { developer ->
+                forAll(NotSoHungryDeveloperGenerator()) { developer ->
                     val chat = MockChat()
                     val office = KarumiHQs(chat)
                     office.openFridge(developer)
 
                     chat.messageSent == null
-                })
+                }
             }
 
             should("always has more than two maxibons in the fridge even if some karumies grab maxibons in group") {
-                forAll(Gen.list(DeveloperGenerator()), { developers ->
+                forAll(Gen.list(AnyDeveloperGenerator())) { developers ->
                     val office = KarumiHQs()
 
                     office.openFridge(developers)
 
                     office.maxibonsLeft > 2
-                })
+                }
             }
 
             should("buy 10 more maxibons if there are less than 2 in the fridge when grabbing maxibons in group") {
-                forAll(Gen.list(DeveloperGenerator()), { developers ->
+                forAll(Gen.list(AnyDeveloperGenerator())) { developers ->
                     val office = KarumiHQs()
                     val initialMaxibons = office.maxibonsLeft
 
@@ -81,35 +82,35 @@ class KarumiHQsTest : ShouldSpec() {
 
                     val expectedMaxibons = calculateMaxibonsLeft(initialMaxibons, developers)
                     office.maxibonsLeft == expectedMaxibons
-                })
+                }
             }
 
             should("request 10 more maxibons using the chat if there are less than 3 in the fridge when grabbing maxibons in group") {
-                forAll(Gen.list(HungryDeveloperGenerator()), { developers ->
+                forAll(Gen.list(HungryDeveloperGenerator()).filter { it.isNotEmpty() }) { developers ->
                     val chat = MockChat()
                     val office = KarumiHQs(chat)
 
                     office.openFridge(developers)
 
                     chat.messageSent!!.contains("We need more maxibons!")
-                })
+                }
             }
 
             should("never request more maxibons to the team using the chat if there are more than 2 in the fridge when grabbing maxibons in group") {
-                forAll(ListOf(0, 7, DeveloperForMaxGenerator(1)), { developersWhoWontGrabAllMaxibons ->
+                forAll(ListOf(0, 7, DeveloperForMaxGenerator(1))) { developersWhoWontGrabAllMaxibons ->
                     val chat = MockChat()
                     val office = KarumiHQs(chat)
 
                     office.openFridge(developersWhoWontGrabAllMaxibons)
 
                     chat.messageSent == null
-                })
+                }
             }
         }
     }
 
     private fun calculateMaxibonsLeft(initialMaxibons: Int, dev: Developer): Int =
-            calculateMaxibonsLeft(initialMaxibons, listOf(dev))
+        calculateMaxibonsLeft(initialMaxibons, listOf(dev))
 
     private fun calculateMaxibonsLeft(initialMaxibons: Int, developers: List<Developer>): Int =
         developers.fold(initialMaxibons) { acc, dev ->
@@ -126,6 +127,5 @@ class KarumiHQsTest : ShouldSpec() {
         override fun sendMessage(message: String) {
             messageSent = message
         }
-
     }
 }
