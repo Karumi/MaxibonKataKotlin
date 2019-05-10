@@ -1,7 +1,6 @@
 package com.karumi.maxibonkata
 
 import io.kotlintest.properties.Gen
-import kotlin.random.Random
 
 object Generators {
     open class DeveloperGenerator(
@@ -44,7 +43,7 @@ object Generators {
         override fun constants(): Iterable<List<T>> = emptyList()
 
         override fun random(): Sequence<List<T>> = generateSequence {
-            val size = Random.nextInt(min, max + 1)
+            val size = Gen.choose(min, max + 1).random().first()
             gen.random().take(size).toList()
         }
     }
